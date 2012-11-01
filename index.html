@@ -42,14 +42,15 @@
             if (typeof oauthResponse === 'undefined'
                 || typeof oauthResponse['access_token'] === 'undefined') {
                 $('#message').html('Error - unauthorized!');
-                console.log(oauthResponse);
+                // console.log(oauthResponse);
+                alert('error');
             } else {
-                console.log(client);
+                // console.log(client);
                 // Sets the session token
                 client.setSessionToken(oauthResponse.access_token, null,
                     oauthResponse.instance_url);
 
-
+                alert('success');
 
                 // Make a query
                 // client.query("SELECT Name FROM Account LIMIT 1",
@@ -59,11 +60,11 @@
                 //     });
 
                 // Get refresh token fails
-                client.refreshAccessToken(function(response){
-                    console.log(response);
-                },function(response){
-                    console.log(response);
-                });
+                // client.refreshAccessToken(function(response){
+                //     console.log(response);
+                // },function(response){
+                //     console.log(response);
+                // });
 
                 // GET web services
                 // client.apexrest( '/kio/v1.0/getNews', function(response){
