@@ -1,0 +1,160 @@
+<html>
+  <head>
+    <title>OAuth Callback</title>
+
+    <!--
+    jQuery - http://docs.jquery.com/Downloading_jQuery
+    -->
+    <script type="text/javascript" src="js/jquery-1.8.2.min.js"></script>
+    <!--
+    From jQuery-swip - http://code.google.com/p/jquery-swip/source/browse/trunk/jquery.popupWindow.js
+    -->
+    <script type="text/javascript" src="js/popup.js"></script>
+    <script type="text/javascript" src="js/forcetk.js"></script>
+    <script type="text/javascript">
+        // OAuth Configuration
+        var loginUrl    = 'https://test.salesforce.com/';
+        var clientId    = '3MVG9_7ddP9KqTzcZNlY7gQI32x71raqAQ2SGaM7gVbzzHz.urjIBA_ICe1P.jD2G_4QmmPixh4BomIwAZBuI';
+        var redirectUri = 'https://localhost/OAuth/callback.html';
+        var proxyUrl    = 'https://localhost/OAuth/proxy/proxy.php?mode=native';
+
+        var client = new forcetk.Client(clientId, loginUrl, proxyUrl);
+
+        // Popup a new window
+        $(document).ready(function() {
+            $('#message').popupWindow({
+                windowURL: getAuthorizeUrl(loginUrl, clientId, redirectUri),
+                windowName: 'Connect',
+                centerBrowser: 1,
+                height:524,
+                width:675
+            });
+        });
+
+        function getAuthorizeUrl(loginUrl, clientId, redirectUri){
+            return loginUrl+'services/oauth2/authorize?display=popup'
+                +'&response_type=token&client_id='+escape(clientId)
+                +'&redirect_uri='+escape(redirectUri);
+        }
+
+        function sessionCallback(oauthResponse) {
+
+            if (typeof oauthResponse === 'undefined'
+                || typeof oauthResponse['access_token'] === 'undefined') {
+                $('#message').html('Error - unauthorized!');
+                console.log(oauthResponse);
+            } else {
+                console.log(client);
+                // Sets the session token
+                client.setSessionToken(oauthResponse.access_token, null,
+                    oauthResponse.instance_url);
+
+
+
+                // Make a query
+                // client.query("SELECT Name FROM Account LIMIT 1",
+                //     function(response){
+                //         $('#message').html('The first account I see is '
+                //           +response.records[0].Name);
+                //     });
+
+                // Get refresh token fails
+                client.refreshAccessToken(function(response){
+                    console.log(response);
+                },function(response){
+                    console.log(response);
+                });
+
+                // GET web services
+                // client.apexrest( '/kio/v1.0/getNews', function(response){
+
+                //     console.log('web services success');
+                //     console.log(JSON.parse(response));
+
+                // }, function(response){
+
+                //     console.log('web services error');
+                //     console.log(JSON.parse(response));
+
+                // }, 'GET', null, null);
+
+                // POST web services
+                // var postObject = JSON.stringify({reportList : [{groundId: 'a00J0000002ZebWIAS', description: 'Test description', name: 'Manuel OAuth', phone: '123123', email: 'asd@asd.com', address: 'My address OAuth', reportDate: '12/02/2012 12:34'}]});
+
+                // client.apexrest( '/kio/v1.0/newReport', function(response){
+
+                //     console.log('web services success');
+                //     console.log(response);
+
+                // }, function(response){
+
+                //     console.log('web services error');
+                //     console.log(response);
+
+                // }, 'POST',  postObject, null);
+
+                // Get SFDC versions
+                // client.versions(function(response){
+                //     console.log(response);
+                // },function(response){
+                //     console.log(response);
+                // });
+
+                // Get SFDC resources
+                // client.resources(function(response){
+                //     console.log(response.chatter);      // Different ways of calling an attribute in a JS object
+                //     console.log(response['chatter']);
+                // },function(response){
+                //     console.log(response);
+                // });
+
+                // Get SFDC describeGlobal
+                // client.describeGlobal(function(response){
+                //         console.log(response);
+                //     for(var i in response['sobjects']){
+                //         console.log(response['sobjects'][i]['name']);
+                //     }
+                //     // console.log(response['sobjects'][0]['name']);
+                // },function(response){
+                //     console.log(response);
+                // });
+
+                // Get SFDC object metadata
+                // client.metadata('News__c', function(response){
+                //     console.log(response);
+                // },function(response){
+                //     console.log(response);
+                // });
+
+                // Get SFDC object description
+                // client.describe('News__c', function(response){
+                //     console.log(response);
+                // },function(response){
+                //     console.log(response);
+                // });
+
+                // Create SFDC object
+                // var fields = {Body__c : 'news created using forcetk method', Title__c : 'Forcetk News'};
+                // client.create('News__c', fields, function(response){
+                //     console.log(response);
+                // },function(response){
+                //     console.log(response);
+                // });
+
+                // Get SFDC object
+                // var objectID = 'a00J0000002ZebWIAS';
+                // client.retrieve('Ground__c', objectID, null, function(response){
+                //     console.log(response);
+                // },function(response){
+                //     console.log(response);
+                // });
+
+                // console.log(oauthResponse);
+            }
+        }
+    </script>
+    </head>
+    <body>
+        <p id="message">Click here.</p>
+    </body>
+</html>
