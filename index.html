@@ -13,10 +13,10 @@
     <script type="text/javascript" src="js/forcetk.js"></script>
     <script type="text/javascript">
         // OAuth Configuration
-        var loginUrl    = 'https://test.salesforce.com/';
-        var clientId    = '3MVG9_7ddP9KqTzcZNlY7gQI32x71raqAQ2SGaM7gVbzzHz.urjIBA_ICe1P.jD2G_4QmmPixh4BomIwAZBuI';
-        var redirectUri = 'https://localhost/OAuth/callback.html';
-        var proxyUrl    = 'https://localhost/OAuth/proxy/proxy.php?mode=native';
+       var loginUrl    = 'https://login.salesforce.com/';
+       var clientId    = '3MVG98XJQQAccJQeEL1KLBnfwOxPuZjvtE8BQntjOa.AkloOtt5d_ki6C7IqOtHAE6Q3CBA.9.PPZ9gPYd2N_';
+       var redirectUri = 'http://localhost/OAuth/callback.html';
+        var proxyUrl    = 'http://localhost/OAuth/proxy/proxy.php?mode=native';
 
         var client = new forcetk.Client(clientId, loginUrl, proxyUrl);
 
@@ -45,13 +45,17 @@
                 // console.log(oauthResponse);
                 alert('error');
             } else {
-                // console.log(client);
+                console.log('before');
+                console.log(client);
                 // Sets the session token
                 client.setSessionToken(oauthResponse.access_token, null,
                     oauthResponse.instance_url);
 
-                alert('success');
-
+                // Gets the refresh token and set this to the client
+                console.log(escape(oauthResponse['refresh_token']));
+                client.setRefreshToken(oauthResponse['refresh_token']);
+                console.log('after');
+                console.log(client);
                 // Make a query
                 // client.query("SELECT Name FROM Account LIMIT 1",
                 //     function(response){
@@ -60,11 +64,13 @@
                 //     });
 
                 // Get refresh token fails
-                // client.refreshAccessToken(function(response){
-                //     console.log(response);
-                // },function(response){
-                //     console.log(response);
-                // });
+                client.refreshAccessToken(function(response){
+                    console.log('refresh success');
+                    console.log(response);
+                },function(response){
+                    console.log('refresh error');
+                    console.log(response);
+                });
 
                 // GET web services
                 // client.apexrest( '/kio/v1.0/getNews', function(response){
